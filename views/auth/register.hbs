@@ -1,0 +1,102 @@
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card shadow">
+      <div class="card-header bg-success text-white text-center">
+        <h3><i class="bi bi-book-half"></i> BookApp</h3>
+        <p class="mb-0">Registro de Usuario</p>
+      </div>
+      <div class="card-body">
+        {{#if error}}
+          <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i>
+            {{error}}
+          </div>
+        {{/if}}
+
+        {{#if success}}
+          <div class="alert alert-success">
+            <i class="bi bi-check-circle"></i>
+            {{success}}
+          </div>
+        {{/if}}
+
+        <form method="POST" action="/register">
+          <div class="row">
+            <div class="mb-3">
+              <label for="Name" class="form-label">
+                <i class="bi bi-person"></i>
+                Nombre
+              </label>
+              <input
+                type="text"
+                class="form-control"
+                id="Name"
+                name="Name"
+                placeholder="Ingrese su nombre"
+                value="{{formData.name}}"
+                required="required"
+              />
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label for="Email" class="form-label">
+              <i class="bi bi-envelope"></i>
+              Correo Electrónico
+            </label>
+            <input
+              type="email"
+              class="form-control"
+              id="Email"
+              name="Email"
+              placeholder="correo@ejemplo.com"
+              value="{{formData.email}}"
+              required="required"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="Password" class="form-label">
+              <i class="bi bi-lock"></i>
+              Contraseña
+            </label>
+            <input
+              type="password"
+              class="form-control"
+              id="Password"
+              name="Password"
+              placeholder="Ingrese una contraseña segura"
+              required="required"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="ConfirmPassword" class="form-label">
+              <i class="bi bi-lock-fill"></i>
+              Confirmar Contraseña
+            </label>
+            <input
+              type="password"
+              class="form-control"
+              id="ConfirmPassword"
+              name="ConfirmPassword"
+              placeholder="Confirme su contraseña"
+              required="required"
+            />
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-person-plus"></i>
+              Registrar Usuario
+            </button>
+            <a href="/" class="btn btn-outline-primary">
+              <i class="bi bi-arrow-left"></i>
+              Volver al Login
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

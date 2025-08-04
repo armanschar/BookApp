@@ -1,0 +1,43 @@
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card shadow">
+      <div class="card-header bg-dark text-white text-center">
+        <h3><i class="bi bi-book-half"></i> BookApp</h3>
+        <p class="mb-0">Restaurar contraseña</p>
+      </div>
+      <div class="card-body">
+        <form method="POST" action="/forgot">
+          <div class="mb-3">
+            <label for="Email" class="form-label">
+              <i class="bi bi-person"></i>
+              Correo
+            </label>
+            <input
+              type="email"
+              class="form-control"
+              id="Email"
+              name="Email"
+              placeholder="Ingrese su correo"
+              required="required"
+            />
+          </div>
+
+          <div class="d-grid">
+            <a href="/" class="btn btn-secondary mb-2">
+              <i class="bi bi-arrow-left"></i>
+              Volver al inicio de sesión
+            </a>
+
+            <button type="submit" class="btn btn-primary mb-2">
+              <i class="bi bi-question-circle"></i>
+              Restaurar Contraseña
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-center text-muted">
+        <small>Sistema de Gestión de Libros</small>
+      </div>
+    </div>
+  </div>
+</div>

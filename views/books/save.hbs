@@ -1,0 +1,140 @@
+<div class="row">
+    <div class="col-md-8">
+        <h1>{{#if editMode}}Editar Libro{{else}}Crear Nuevo Libro{{/if}}</h1>
+        
+        {{#if errors}}
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                {{#each errors}}
+                <li>{{this}}</li>
+                {{/each}}
+            </ul>
+        </div>
+        {{/if}}
+        
+        <form enctype="multipart/form-data" method="POST" action="{{#if editMode}}/books/edit{{else}}/books/create{{/if}}">
+            {{#if editMode}}
+            <input type="hidden" name="BookId" value="{{book.id}}">
+            {{/if}}
+            
+            <div class="mb-3">
+                <label for="Title" class="form-label">Título del Libro *</label>
+                <input type="text" class="form-control" id="Title" name="Title" 
+                       value="{{#if editMode}}{{book.title}}{{else}}{{formData.Title}}{{/if}}" required="required">
+            </div>
+            
+            <div class="mb-3">
+                <label for="PublicationYear" class="form-label">Año de Publicación *</label>
+                <input type="number" class="form-control" id="PublicationYear" name="PublicationYear" 
+                       min="1450" max="2035"
+                       value="{{#if editMode}}{{book.publicationYear}}{{else}}{{formData.PublicationYear}}{{/if}}" required="required">
+            </div>
+            
+            <div class="mb-3">
+                <label for="CoverImage" class="form-label">Imagen de Portada {{#unless editMode}}*{{/unless}}</label>
+                {{#if editMode}}
+                    {{#if book.coverImage}}
+                    <div class="mb-2">
+                        <img src="{{book.coverImage}}" alt="Portada actual" 
+                             class="img-thumbnail" style="width: 150px; height: 200px; object-fit: cover;">
+                        <p class="text-muted mt-1">Imagen actual</p>
+                    </div>
+                    {{/if}}
+                {{/if}}
+                <input type="file" class="form-control" id="CoverImage" name="CoverImage" 
+                       accept="image/*"
+                       {{#unless editMode}}required="required"{{/unless}}>
+                {{#if editMode}}
+                <small class="form-text text-muted">Deje vacío para mantener la imagen actual</small>
+                {{/if}}
+            </div>
+            
+            <div class="mb-3">
+                <label for="CategoryId" class="form-label">Categoría *</label>
+                {{#if hasCategories}}
+                <select class="form-select" id="CategoryId" name="CategoryId" required="required">
+                    <option value="">Seleccione una Categoría</option>
+                    {{#each categoriesList}}
+                    <option value="{{this.id}}" 
+                            {{#if ../editMode}}
+                                {{#if (eq this.id ../book.categoryId)}}selected{{/if}}
+                            {{else}}
+                                {{#if (eq this.id ../formData.CategoryId)}}selected{{/if}}
+                            {{/if}}>
+                        {{this.name}}
+                    </option>
+                    {{/each}}
+                </select>
+                {{else}}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    No hay categorías disponibles. <a href="/categories/create">Crear una categoría primero</a>
+                </div>
+                {{/if}}
+            </div>
+
+            <div class="mb-3">
+                <label for="AuthorId" class="form-label">Autor *</label>
+                {{#if hasAuthors}}
+                <select class="form-select" id="AuthorId" name="AuthorId" required="required">
+                    <option value="">Seleccione un Autor</option>
+                    {{#each authorsList}}
+                    <option value="{{this.id}}" 
+                            {{#if ../editMode}}
+                                {{#if (eq this.id ../book.authorId)}}selected{{/if}}
+                            {{else}}
+                                {{#if (eq this.id ../formData.AuthorId)}}selected{{/if}}
+                            {{/if}}>
+                        {{this.name}}
+                    </option>
+                    {{/each}}
+                </select>
+                {{else}}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    No hay autores disponibles. <a href="/authors/create">Crear un autor primero</a>
+                </div>
+                {{/if}}
+            </div>
+
+            <div class="mb-3">
+                <label for="PublisherId" class="form-label">Editorial *</label>
+                {{#if hasPublishers}}
+                <select class="form-select" id="PublisherId" name="PublisherId" required="required">
+                    <option value="">Seleccione una Editorial</option>
+                    {{#each publishersList}}
+                    <option value="{{this.id}}" 
+                            {{#if ../editMode}}
+                                {{#if (eq this.id ../book.publisherId)}}selected{{/if}}
+                            {{else}}
+                                {{#if (eq this.id ../formData.PublisherId)}}selected{{/if}}
+                            {{/if}}>
+                        {{this.name}}
+                    </option>
+                    {{/each}}
+                </select>
+                {{else}}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    No hay editoriales disponibles. <a href="/publishers/create">Crear una editorial primero</a>
+                </div>
+                {{/if}}
+            </div>
+            
+            <div class="mb-3">
+                <a href="/books" class="btn btn-secondary me-2">
+                    <i class="bi bi-arrow-left"></i> Volver Atrás
+                </a>
+                {{#if hasCategories}}
+                    {{#if hasAuthors}}
+                        {{#if hasPublishers}}
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save"></i> {{#if editMode}}Guardar Libro{{else}}Crear Libro{{/if}}
+                            </button>
+                        {{/if}}
+                    {{/if}}
+                {{/if}}
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h1>Mantenimiento de Libros</h1>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="/books/create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Crear Nuevo Libro
+        </a>
+    </div>
+</div>
+
+{{#if hasBooks}}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Portada</th>
+                <th>Año de Publicación</th>
+                <th>Categoría</th>
+                <th>Autor</th>
+                <th>Editorial</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each booksList}}
+            <tr>
+                <td>{{this.title}}</td>
+                <td>
+                    <img src="{{this.coverImage}}" alt="{{this.title}}" 
+                         class="img-thumbnail" style="width: 80px; height: 60px; object-fit: cover;">
+                </td>
+                <td>{{this.publicationYear}}</td>
+                <td>{{getCategoryName ../categoriesList this.categoryId}}</td>
+                <td>{{getAuthorName ../authorsList this.authorId}}</td>
+                <td>{{getPublisherName ../publishersList this.publisherId}}</td>
+                <td>
+                    <a href="/books/edit/{{this.id}}" class="btn btn-sm btn-warning me-2">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="/books/delete/{{this.id}}" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+{{else}}
+<div class="alert alert-info text-center">
+    <i class="bi bi-info-circle"></i>
+    No hay libros registrados. <a href="/books/create">Crear un nuevo libro</a>
+</div>
+{{/if}}

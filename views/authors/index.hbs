@@ -1,0 +1,47 @@
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h1>Mantenimiento de Autores</h1>
+    </div>
+    <div class="col-md-6 text-end">
+        <a href="/authors/create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Crear Nuevo Autor
+        </a>
+    </div>
+</div>
+
+{{#if hasAuthors}}
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nombre del Autor</th>
+                <th>Correo</th>
+                <th>Número de libros asociados</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each authorsList}}
+            <tr>
+                <td>{{this.name}}</td>
+                <td>{{this.email}}</td>
+                <td><span class="badge bg-secondary">{{this.bookCount}}</span></td>
+                <td>
+                    <a href="/authors/edit/{{this.id}}" class="btn btn-sm btn-warning me-2">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="/authors/delete/{{this.id}}" class="btn btn-sm btn-danger">
+                        <i class="bi bi-trash"></i> Eliminar
+                    </a>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+{{else}}
+<div class="alert alert-info text-center">
+    <i class="bi bi-info-circle"></i>
+    No hay autores registrados. <a href="/authors/create">Crear un nuevo autor</a>
+</div>
+{{/if}}

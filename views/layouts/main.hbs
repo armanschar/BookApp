@@ -1,0 +1,72 @@
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{page-title}}</title>
+    <link href="/assets/css/lib/bootstrap/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+    <link href="/assets/css/custom/book.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/home">
+          <i class="bi bi-book-half"></i>BookApp
+        </a>
+        <div class="navbar-nav">
+          <a class="nav-link" href="/home">Home</a>
+          <a class="nav-link" href="/books">Libros</a>
+          <a class="nav-link" href="/authors">Autores</a>
+          <a class="nav-link" href="/categories">Categorías</a>
+          <a class="nav-link" href="/publishers">Editoriales</a>
+          <a class="nav-link" href="/logout">Cerrar Sesión{{#if hasUser}} ({{user.email}}){{/if}}</a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container mt-4">
+      {{#if hsaErrors}}
+        <div
+          class="alert alert-danger alert-dismissible fade show"
+          role="alert"
+        >
+          <ul>
+            {{#each errors}}
+              <li>{{this}}</li>
+            {{/each}}
+          </ul>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+      {{/if}}
+      {{#if success}}
+        <div
+          class="alert alert-success alert-dismissible fade show"
+          role="alert"
+        >
+          <ul>
+            {{#each success}}
+              <li>{{this}}</li>
+            {{/each}}
+          </ul>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+            aria-label="Close"
+          ></button>
+        </div>
+      {{/if}}
+      {{{body}}}
+    </div>
+
+    <script src="/assets/js/lib/bootstrap/bootstrap.bundle.min.js"></script>
+  </body>
+</html>

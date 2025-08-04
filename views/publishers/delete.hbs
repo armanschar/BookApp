@@ -1,0 +1,51 @@
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body text-center">
+                <h3 class="card-title text-danger">
+                    <i class="bi bi-exclamation-triangle"></i> Confirmar Eliminación
+                </h3>
+                
+                {{#if error}}
+                <div class="alert alert-danger">
+                    <i class="bi bi-x-circle"></i> {{error}}
+                </div>
+                {{else}}
+                <p class="card-text">
+                    ¿Está seguro que desea eliminar esta editorial?
+                </p>
+                {{/if}}
+                
+                <div class="alert alert-info">
+                    <strong>{{publisher.name}}</strong><br>
+                    <small class="text-muted">
+                        <i class="bi bi-telephone"></i> {{publisher.phone}}<br>
+                        <i class="bi bi-geo-alt"></i> {{publisher.country}}
+                    </small><br>
+                    {{#if bookCount}}
+                    <small class="text-warning">
+                        <i class="bi bi-book"></i> {{bookCount}} libro(s) asociado(s)
+                    </small>
+                    {{else}}
+                    <small class="text-success">
+                        <i class="bi bi-check-circle"></i> Sin libros asociados
+                    </small>
+                    {{/if}}
+                </div>
+                
+                <form method="POST" action="/publishers/delete" class="d-inline">
+                    <input type="hidden" name="publisherId" value="{{publisher.id}}">
+                    <a href="/publishers" class="btn btn-secondary me-2">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </a>
+                    {{#unless error}}
+                    <button type="submit" class="btn btn-danger" 
+                            {{#if bookCount}}disabled title="No se puede eliminar: tiene libros asociados"{{/if}}>
+                        <i class="bi bi-trash"></i> Eliminar
+                    </button>
+                    {{/unless}}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

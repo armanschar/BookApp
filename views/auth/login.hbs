@@ -1,0 +1,68 @@
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-4">
+    <div class="card shadow">
+      <div class="card-header bg-dark text-white text-center">
+        <h3><i class="bi bi-book-half"></i> BookApp</h3>
+        <p class="mb-0">Iniciar Sesión</p>
+      </div>
+      <div class="card-body">
+        {{#if error}}
+          <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle"></i>
+            {{error}}
+          </div>
+        {{/if}}
+
+        <form method="POST" action="/">
+          <div class="mb-3">
+            <label for="Email" class="form-label">
+              <i class="bi bi-person"></i>
+              Correo
+            </label>
+            <input
+              type="email"
+              class="form-control"
+              id="Email"
+              name="Email"
+              placeholder="Ingrese su correo"
+              required="required"
+            />
+          </div>
+
+          <div class="mb-3">
+            <label for="Password" class="form-label">
+              <i class="bi bi-lock"></i>
+              Contraseña
+            </label>
+            <input
+              type="password"
+              class="form-control"
+              id="Password"
+              name="Password"
+              placeholder="Ingrese su contraseña"
+              required="required"
+            />
+          </div>
+
+          <div class="d-grid">
+            <a href="/forgot" class="btn btn-success mb-2">
+              <i class="bi bi-question-circle"></i>
+              Restaurar Contraseña
+            </a>
+            <a href="/register" class="btn btn-success mb-2">
+              <i class="bi bi-person-add"></i>
+              Registrar Usuario
+            </a>
+            <button type="submit" class="btn btn-primary mb-2">
+              <i class="bi bi-person-check"></i>
+              Iniciar Sesión
+            </button>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-center text-muted">
+        <small>Sistema de Gestión de Libros</small>
+      </div>
+    </div>
+  </div>
+</div>

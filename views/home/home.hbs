@@ -1,0 +1,123 @@
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h1>Libros Disponibles</h1>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-12">
+        <form method="GET" action="/" class="card p-3">
+            <div class="row">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <label for="search" class="form-label">Buscar por título:</label>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           placeholder="Buscar libro por nombre..." 
+                           value="{{searchTerm}}">
+                </div>
+                <div class="col-md-6">
+                    {{#if hasCategories}}
+                    <label class="form-label">Filtrar por categorías (puedes seleccionar varias):</label>
+                    <div class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                        {{#each categoriesList}}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" 
+                                   name="category" value="{{this.id}}" id="category{{this.id}}"
+                                   {{#each ../selectedCategories}}
+                                       {{#if (eq this ../this.id)}}checked{{/if}}
+                                   {{/each}}>
+                            <label class="form-check-label" for="category{{this.id}}">
+                                {{this.name}}
+                            </label>
+                        </div>
+                        {{/each}}
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12">
+                    <button class="btn btn-primary me-2" type="submit">
+                        <i class="bi bi-search"></i> Buscar y Filtrar
+                    </button>
+                    <a href="/" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise"></i> Limpiar Filtros
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{#if hasBooks}}
+<div class="row">
+    {{#each booksList}}
+    <div class="col-md-4 mb-4">
+        <div class="card h-100 book-card" style="cursor: pointer;" 
+             onclick="location.href='/books/details/{{this.id}}';">
+            <img src="{{this.coverImage}}" class="card-img-top" 
+                 alt="{{this.title}}" style="height: 200px; object-fit: contain;">
+            <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{this.title}}</h5>
+                <p class="card-text">
+                    <small class="text-muted">
+                        <i class="bi bi-calendar"></i> Año: {{this.publicationYear}}
+                    </small><br>
+                    <small class="text-muted">
+                        <i class="bi bi-tag"></i> {{getCategoryName ../categoriesList this.categoryId}}
+                    </small><br>
+                    <small class="text-muted">
+                        <i class="bi bi-person"></i> {{getAuthorName ../authorsList this.authorId}}
+                    </small><br>
+                    <small class="text-muted">
+                        <i class="bi bi-building"></i> {{getPublisherName ../publishersList this.publisherId}}
+                    </small>
+                </p>
+            </div>
+        </div>
+    </div>
+    {{/each}}
+</div>
+
+{{#if searchTerm}}
+<div class="alert alert-info">
+    <i class="bi bi-info-circle"></i>
+    Mostrando resultados para: "{{searchTerm}}"
+    {{#if selectedCategories}}
+        en las categorías seleccionadas
+    {{/if}}
+</div>
+{{/if}}
+
+{{#if selectedCategories}}
+<div class="alert alert-secondary">
+    <i class="bi bi-funnel-fill"></i>
+    <strong>Categorías filtradas:</strong>
+    {{#each selectedCategories}}
+        {{#each ../categoriesList}}
+            {{#if (eq ../this this.id)}}
+                <span class="badge bg-primary me-1">{{this.name}}</span>
+            {{/if}}
+        {{/each}}
+    {{/each}}
+</div>
+{{/if}}
+
+{{else}}
+<div class="row">
+    <div class="col-12">
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i>
+            {{#if searchTerm}}
+                No se encontraron libros que coincidan con "{{searchTerm}}"
+                {{#if selectedCategories}}
+                    en las categorías seleccionadas
+                {{/if}}
+            {{else if selectedCategories}}
+                No hay libros disponibles para las categorías seleccionadas
+            {{else}}
+                No hay libros disponibles. <a href="/books/create">Agregar un nuevo libro</a>
+            {{/if}}
+        </div>
+    </div>
+</div>
+{{/if}}
