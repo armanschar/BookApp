@@ -1,48 +1,42 @@
-import connection from "../utils/DbConnection.js";
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 
-const Users = connection.define(
-  "Users",
+const usersSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-      allowNull: false,
-    },
     name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     email: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
+      trim: true,
+      lowercase: true,
     },
     password: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     resetToken: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: String,
+      default: null,
     },
     resetTokenExpiration: {
-      type: DataTypes.DATE,
-      allowNull: true,
+      type: Date,
+      default: null,
     },
     activateToken: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: String,
+      default: null,
     },
     isActive: {
-      type: DataTypes.BOOLEAN,
-      allowNull: true,
-      defaultValue: false,
+      type: Boolean,
+      default: false,
+      required: true,
     },
   },
-  {
-    tableName: "Users",
-  }
-);
+  { timestamps: true, collection: "Users" }
+); //esquema creado especificando los campos created y updated at y diciendo en que coleccion colocar los documentos
+
+const Users = mongoose.model("Users", usersSchema); //creando el modelo segun el esquema
 
 export default Users;

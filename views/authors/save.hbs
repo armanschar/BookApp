@@ -10,19 +10,19 @@
         
         <form method="POST" action="{{#if editMode}}/authors/edit{{else}}/authors/create{{/if}}">
             {{#if editMode}}
-            <input type="hidden" name="authorId" value="{{author.id}}">
+            <input type="hidden" name="authorId" value="{{author._id}}">
             {{/if}}
             
             <div class="mb-3">
-                <label for="Name" class="form-label">Nombre del Autor *</label>
-                <input type="text" class="form-control" id="Name" name="Name" 
-                       value="{{#if editMode}}{{author.name}}{{else}}{{formData.Name}}{{/if}}" required="required">
+                <label for="name" class="form-label">Nombre del Autor *</label>
+                <input type="text" class="form-control" id="name" name="name" 
+                       value="{{#if editMode}}{{author.name}}{{else}}{{formData.name}}{{/if}}" required="required">
             </div>
 
             <div class="mb-3">
-                <label for="Email" class="form-label">Correo Electrónico *</label>
-                <input type="email" class="form-control" id="Email" name="Email" 
-                       value="{{#if editMode}}{{author.email}}{{else}}{{formData.Email}}{{/if}}" 
+                <label for="email" class="form-label">Correo Electrónico *</label>
+                <input type="email" class="form-control" id="email" name="email" 
+                       value="{{#if editMode}}{{author.email}}{{else}}{{formData.email}}{{/if}}" 
                        required="required">
             </div>
             

@@ -10,18 +10,18 @@
         
         <form method="POST" action="{{#if editMode}}/categories/edit{{else}}/categories/create{{/if}}">
             {{#if editMode}}
-            <input type="hidden" name="categoryId" value="{{category.id}}">
+            <input type="hidden" name="categoryId" value="{{category._id}}">
             {{/if}}
             
             <div class="mb-3">
-                <label for="Name" class="form-label">Nombre de la Categoría *</label>
-                <input type="text" class="form-control" id="Name" name="Name" 
+                <label for="name" class="form-label">Nombre de la Categoría *</label>
+                <input type="text" class="form-control" id="name" name="name" 
                        value="{{#if editMode}}{{category.name}}{{/if}}" required="required">
             </div>
 
             <div class="mb-3">
-                <label for="Description" class="form-label">Descripción *</label>
-                <input type="text" class="form-control" id="Description" name="Description" 
+                <label for="description" class="form-label">Descripción *</label>
+                <input type="text" class="form-control" id="description" name="description" 
                        value="{{#if editMode}}{{category.description}}{{/if}}" required="required">
             </div>
             

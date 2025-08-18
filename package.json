@@ -18,11 +18,10 @@
     "express": "^5.1.0",
     "express-handlebars": "^8.0.3",
     "express-session": "^1.18.2",
-    "mariadb": "^3.4.4",
+    "express-validator": "^7.2.1",
+    "mongoose": "^8.17.0",
     "multer": "^2.0.2",
     "nodemailer": "^7.0.5",
-    "sequelize": "^6.37.7",
-    "sqlite3": "^5.1.7",
     "uuid": "^11.1.0"
   }
 }

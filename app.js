@@ -1,4 +1,5 @@
 import "./utils/LoadEnvConfig.js";
+import connectDB from "./utils/MongooseConnection.js";
 import express from "express";
 import { engine } from "express-handlebars";
 import path from "path";
@@ -9,7 +10,6 @@ import authorsRoutes from "./routes/authors-router.js";
 import publishersRoutes from "./routes/publishers-router.js";
 import booksRoutes from "./routes/books-router.js";
 import authRoutes from "./routes/auth.js";
-import context from "./context/AppContext.js";
 import multer from "multer";
 import flash from "connect-flash";
 import { v4 as uuidv4 } from "uuid";
@@ -22,7 +22,6 @@ import { GetPhone } from "./utils/helpers/hbs/GetPhone.js";
 import { GetCountry } from "./utils/helpers/hbs/GetCountry.js";
 import session from "express-session";
 
-//agregar req flash para success y errors a todos los controllers
 
 const app = express();
 
@@ -116,14 +115,7 @@ app.use((req, res, next) => {
 });
 
 try {
-  const shouldForce = process.env.DB_FORCE === "true";
-  const shouldAlter = process.env.DB_ALTER === "true";
-  if (shouldForce) {
-    await context.Sequelize.sync({ force: true });
-  } else {
-    await context.Sequelize.sync({ alter: shouldAlter || false });
-  }
-
+  await connectDB();
   app.listen(process.env.PORT);
   console.log(`Server is running on port ${process.env.PORT}`);
 } catch (error) {

@@ -10,26 +10,26 @@
         
         <form method="POST" action="{{#if editMode}}/publishers/edit{{else}}/publishers/create{{/if}}">
             {{#if editMode}}
-            <input type="hidden" name="publisherId" value="{{publisher.id}}">
+            <input type="hidden" name="publisherId" value="{{publisher._id}}">
             {{/if}}
             
             <div class="mb-3">
-                <label for="Name" class="form-label">Nombre de la Editorial *</label>
-                <input type="text" class="form-control" id="Name" name="Name" 
-                       value="{{#if editMode}}{{publisher.name}}{{else}}{{formData.Name}}{{/if}}" required="required">
+                <label for="name" class="form-label">Nombre de la Editorial *</label>
+                <input type="text" class="form-control" id="name" name="name" 
+                       value="{{#if editMode}}{{publisher.name}}{{else}}{{formData.name}}{{/if}}" required="required">
             </div>
 
             <div class="mb-3">
-                <label for="Phone" class="form-label">Teléfono *</label>
-                <input type="tel" class="form-control" id="Phone" name="Phone" 
-                       value="{{#if editMode}}{{publisher.phone}}{{else}}{{formData.Phone}}{{/if}}" 
+                <label for="phone" class="form-label">Teléfono *</label>
+                <input type="tel" class="form-control" id="phone" name="phone" 
+                       value="{{#if editMode}}{{publisher.phone}}{{else}}{{formData.phone}}{{/if}}" 
                        required="required" placeholder="Ej: +1-809-555-1234">
             </div>
             
             <div class="mb-3">
-                <label for="Country" class="form-label">País *</label>
-                <input type="text" class="form-control" id="Country" name="Country" 
-                       value="{{#if editMode}}{{publisher.country}}{{else}}{{formData.Country}}{{/if}}" 
+                <label for="country" class="form-label">País *</label>
+                <input type="text" class="form-control" id="country" name="country" 
+                       value="{{#if editMode}}{{publisher.country}}{{else}}{{formData.country}}{{/if}}" 
                        required="required" placeholder="Ej: República Dominicana">
             </div>
 

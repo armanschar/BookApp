@@ -35,7 +35,7 @@
                                 </li>
                                 <li class="mb-2">
                                     <strong><i class="bi bi-tag text-muted"></i> Categoría:</strong>
-                                    <span class="badge bg-info ms-2">{{getCategoryName categoriesList book.categoryId}}</span>
+                                    <span class="badge bg-info ms-2">{{book.categoryId.name}}</span>
                                 </li>
                             </ul>
                         </div>
@@ -47,7 +47,7 @@
                             <ul class="list-unstyled">
                                 <li class="mb-2">
                                     <strong><i class="bi bi-person-fill text-muted"></i> Nombre:</strong>
-                                    <span class="ms-2">{{getAuthorName authorsList book.authorId}}</span>
+                                    <span class="ms-2">{{book.authorId.name}}</span>
                                 </li>
                             </ul>
                         </div>
@@ -63,15 +63,15 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-2">
                                             <strong><i class="bi bi-building-fill text-muted"></i> Editorial:</strong>
-                                            <br><span class="me-1">{{getPublisherName publishersList book.publisherId}}</span>
+                                            <br><span class="me-1">{{book.publisherId.name}}</span>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <strong><i class="bi bi-geo-alt text-muted"></i> País:</strong>
-                                            <br><span class="me-1">{{getCountry publishersList book.publisherId}}</span>
+                                            <br><span class="me-1">{{book.publisherId.country}}</span>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <strong><i class="bi bi-telephone text-muted"></i> Teléfono:</strong>
-                                            <br><span class="me-1">{{getPhone publishersList book.publisherId}}</span>
+                                            <br><span class="me-1">{{book.publisherId.phone}}</span>
                                         </div>
                                     </div>
                                 </div>

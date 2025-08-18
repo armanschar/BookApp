@@ -1,41 +1,34 @@
-import context from "../context/AppContext.js";
+import BooksModel from "../models/BooksModel.js";
+import CategoriesModel from "../models/CategoriesModel.js";
+import AuthorsModel from "../models/AuthorsModel.js";
+import PublishersModel from "../models/PublishersModel.js";
 import { sendEmail } from "../services/EmailServices.js";
 import path from "path";
 import fs from "fs";
 import { projectRoot } from "../utils/Paths.js";
-import { where } from "sequelize";
 
 export async function GetIndex(req, res, next) {
   try {
-    const booksResult = await context.BooksModel.findAll({
-      where: { userId: req.user.id }, // Assuming you want to filter by the logged-in user
-      include: [
-        { model: context.AuthorsModel },
-        { model: context.CategoriesModel },
-        { model: context.PublishersModel },
-      ],
-    });
-    const authorsResult = await context.AuthorsModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const categoriesResult = await context.CategoriesModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const publishersResult = await context.PublishersModel.findAll({
-      where: { userId: req.user.id },
-    });
+    const result = await BooksModel.find({ userId: req.user.id })
+      .sort({ createdAt: -1 })
+      .lean();
 
-    const books = booksResult.map((result) => result.dataValues);
-    const authors = authorsResult.map((a) => a.dataValues);
-    const categories = categoriesResult.map((c) => c.dataValues);
-    const publishers = publishersResult.map((p) => p.dataValues);
+    const authorsResult = await AuthorsModel.find({
+      userId: req.user.id,
+    }).lean();
+    const categoriesResult = await CategoriesModel.find({
+      userId: req.user.id,
+    }).lean();
+    const publishersResult = await PublishersModel.find({
+      userId: req.user.id,
+    }).lean();
 
     res.render("books", {
-      booksList: books,
-      authorsList: authors,
-      categoriesList: categories,
-      publishersList: publishers,
-      hasBooks: books.length > 0,
+      booksList: result,
+      authorsList: authorsResult,
+      categoriesList: categoriesResult,
+      publishersList: publishersResult,
+      hasBooks: result.length > 0,
       "page-title": "Mantenimiento de Libros",
     });
   } catch (error) {
@@ -45,28 +38,24 @@ export async function GetIndex(req, res, next) {
 
 export async function GetCreate(req, res, next) {
   try {
-    const authorsResult = await context.AuthorsModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const categoriesResult = await context.CategoriesModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const publishersResult = await context.PublishersModel.findAll({
-      where: { userId: req.user.id },
-    });
-
-    const authors = authorsResult.map((a) => a.dataValues);
-    const categories = categoriesResult.map((c) => c.dataValues);
-    const publishers = publishersResult.map((p) => p.dataValues);
+    const authorsResult = await AuthorsModel.find({
+      userId: req.user.id,
+    }).lean();
+    const categoriesResult = await CategoriesModel.find({
+      userId: req.user.id,
+    }).lean();
+    const publishersResult = await PublishersModel.find({
+      userId: req.user.id,
+    }).lean();
 
     res.render("books/save", {
       editMode: false,
-      authorsList: authors,
-      hasAuthors: authors.length > 0,
-      categoriesList: categories,
-      hasCategories: categories.length > 0,
-      publishersList: publishers,
-      hasPublishers: publishers.length > 0,
+      authorsList: authorsResult,
+      hasAuthors: authorsResult.length > 0,
+      categoriesList: categoriesResult,
+      hasCategories: categoriesResult.length > 0,
+      publishersList: publishersResult,
+      hasPublishers: publishersResult.length > 0,
       "page-title": "Crear Nuevo Libro",
     });
   } catch (error) {
@@ -84,7 +73,7 @@ export async function PostCreate(req, res, next) {
       ? "\\" + path.relative("public", coverImage.path)
       : null;
 
-    await context.BooksModel.create({
+    await BooksModel.create({
       title: Title,
       publicationYear: PublicationYear,
       coverImage: coverImagePath,
@@ -94,8 +83,9 @@ export async function PostCreate(req, res, next) {
       userId: req.user.id,
     });
 
-    const author = await context.AuthorsModel.findOne({
-      where: { id: AuthorId, userId: req.user.id },
+    const author = await AuthorsModel.findOne({
+      _id: AuthorId,
+      userId: req.user.id,
     });
 
     if (author && author.email) {
@@ -127,28 +117,24 @@ export async function PostCreate(req, res, next) {
   } catch (error) {
     console.error("Error creating book:", error);
 
-    const authorsResult = await context.AuthorsModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const categoriesResult = await context.CategoriesModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const publishersResult = await context.PublishersModel.findAll({
-      where: { userId: req.user.id },
-    });
-
-    const authors = authorsResult.map((a) => a.dataValues);
-    const categories = categoriesResult.map((c) => c.dataValues);
-    const publishers = publishersResult.map((p) => p.dataValues);
+    const authorsResult = await AuthorsModel.find({
+      userId: req.user.id,
+    }).lean();
+    const categoriesResult = await CategoriesModel.find({
+      userId: req.user.id,
+    }).lean();
+    const publishersResult = await PublishersModel.find({
+      userId: req.user.id,
+    }).lean();
 
     res.render("books/save", {
       editMode: false,
-      authorsList: authors,
-      hasAuthors: authors.length > 0,
-      categoriesList: categories,
-      hasCategories: categories.length > 0,
-      publishersList: publishers,
-      hasPublishers: publishers.length > 0,
+      authorsList: authorsResult,
+      hasAuthors: authorsResult.length > 0,
+      categoriesList: categoriesResult,
+      hasCategories: categoriesResult.length > 0,
+      publishersList: publishersResult,
+      hasPublishers: publishersResult.length > 0,
       formData: req.body,
       error: "Error al crear el libro. Por favor, intente nuevamente.",
       "page-title": "Crear Nuevo Libro",
@@ -160,44 +146,38 @@ export async function GetEdit(req, res, next) {
   const id = req.params.bookId;
 
   try {
-    const bookResult = await context.BooksModel.findOne({
-      where: { id: id, userId: req.user.id }, // Ensure the book belongs to the logged-in user
-      include: [
-        { model: context.AuthorsModel },
-        { model: context.CategoriesModel },
-        { model: context.PublishersModel },
-      ],
-    });
+    const bookResult = await BooksModel.findOne({
+      _id: id,
+      userId: req.user.id,
+    })
+      .populate("authorId", "name email")
+      .populate("categoryId", "name description")
+      .populate("publisherId", "name country phone")
+      .lean();
 
     if (!bookResult) {
       return res.redirect("/books");
     }
-
-    const book = bookResult.dataValues;
-    const authorsResult = await context.AuthorsModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const categoriesResult = await context.CategoriesModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const publishersResult = await context.PublishersModel.findAll({
-      where: { userId: req.user.id },
-    });
-
-    const authors = authorsResult.map((a) => a.dataValues);
-    const categories = categoriesResult.map((c) => c.dataValues);
-    const publishers = publishersResult.map((p) => p.dataValues);
+    const authorsResult = await AuthorsModel.find({
+      userId: req.user.id,
+    }).lean();
+    const categoriesResult = await CategoriesModel.find({
+      userId: req.user.id,
+    }).lean();
+    const publishersResult = await PublishersModel.find({
+      userId: req.user.id,
+    }).lean();
 
     res.render("books/save", {
       editMode: true,
-      book: book,
-      authorsList: authors,
-      hasAuthors: authors.length > 0,
-      categoriesList: categories,
-      hasCategories: categories.length > 0,
-      publishersList: publishers,
-      hasPublishers: publishers.length > 0,
-      "page-title": `Editar Libro: ${book.title}`,
+      book: bookResult,
+      authorsList: authorsResult,
+      hasAuthors: authorsResult.length > 0,
+      categoriesList: categoriesResult,
+      hasCategories: categoriesResult.length > 0,
+      publishersList: publishersResult,
+      hasPublishers: publishersResult.length > 0,
+      "page-title": `Editar Libro: ${bookResult.title}`,
     });
   } catch (error) {
     console.error("Error fetching book for edit:", error);
@@ -212,8 +192,9 @@ export async function PostEdit(req, res, next) {
   const id = req.body.BookId;
 
   try {
-    const result = await context.BooksModel.findOne({
-      where: { id: id, userId: req.user.id },
+    const result = await BooksModel.findOne({
+      _id: id,
+      userId: req.user.id,
     });
 
     if (!result) {
@@ -226,18 +207,15 @@ export async function PostEdit(req, res, next) {
       coverImagePath = result.coverImage;
     }
 
-    await context.BooksModel.update(
-      {
-        title: Title,
-        publicationYear: PublicationYear,
-        coverImage: coverImagePath,
-        authorId: AuthorId,
-        categoryId: CategoryId,
-        publisherId: PublisherId,
-        userId: req.user.id,
-      },
-      { where: { id: id } }
-    );
+    await BooksModel.findByIdAndUpdate(id, {
+      title: Title,
+      publicationYear: PublicationYear,
+      coverImage: coverImagePath,
+      authorId: AuthorId,
+      categoryId: CategoryId,
+      publisherId: PublisherId,
+      userId: req.user.id,
+    });
     res.redirect("/books");
   } catch (error) {
     console.error("Error editing book:", error);
@@ -248,37 +226,34 @@ export async function GetDelete(req, res, next) {
   const id = req.params.bookId;
 
   try {
-    const result = await context.BooksModel.findOne({
-      where: { id: id, userId: req.user.id },
-    });
+    const result = await BooksModel.findOne({
+      _id: id,
+      userId: req.user.id,
+    }).lean();
 
     if (!result) {
       return res.redirect("/books");
     }
 
-    const authorsResult = await context.AuthorsModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const categoriesResult = await context.CategoriesModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const publishersResult = await context.PublishersModel.findAll({
-      where: { userId: req.user.id },
-    });
-    const authors = authorsResult.map((a) => a.dataValues);
-    const categories = categoriesResult.map((c) => c.dataValues);
-    const publishers = publishersResult.map((p) => p.dataValues);
+    const authorsResult = await AuthorsModel.find({
+      userId: req.user.id,
+    }).lean();
+    const categoriesResult = await CategoriesModel.find({
+      userId: req.user.id,
+    }).lean();
+    const publishersResult = await PublishersModel.find({
+      userId: req.user.id,
+    }).lean();
 
-    const book = result.dataValues;
     res.render("books/delete", {
-      book: book,
-      authorsList: authors,
-      hasAuthors: authors.length > 0,
-      categoriesList: categories,
-      hasCategories: categories.length > 0,
-      publishersList: publishers,
-      hasPublishers: publishers.length > 0,
-      "page-title": `Eliminar Libro: ${book.title}`,
+      book: result,
+      authorsList: authorsResult,
+      hasAuthors: authorsResult.length > 0,
+      categoriesList: categoriesResult,
+      hasCategories: categoriesResult.length > 0,
+      publishersList: publishersResult,
+      hasPublishers: publishersResult.length > 0,
+      "page-title": `Eliminar Libro: ${result.title}`,
     });
   } catch (error) {
     console.error("Error fetching book for delete:", error);
@@ -289,8 +264,9 @@ export async function PostDelete(req, res, next) {
   const id = req.body.BookId;
 
   try {
-    const result = await context.BooksModel.findOne({
-      where: { id: id, userId: req.user.id },
+    const result = await BooksModel.findOne({
+      _id: id,
+      userId: req.user.id,
     });
 
     if (!result) {
@@ -302,7 +278,7 @@ export async function PostDelete(req, res, next) {
       fs.unlinkSync(coverImagePath);
     }
 
-    await context.BooksModel.destroy({ where: { id: id } });
+    await BooksModel.deleteOne({ _id: id });
     res.redirect("/books");
   } catch (error) {
     console.error("Error deleting book:", error);
@@ -313,23 +289,14 @@ export async function GetDetails(req, res, next) {
   const id = req.params.bookId;
 
   try {
-    const bookResult = await context.BooksModel.findOne({
-      where: { id: id, userId: req.user.id }, // Ensure the book belongs to the logged-in user
-      include: [
-        {
-          model: context.AuthorsModel,
-          attributes: ["id", "name", "email"],
-        },
-        {
-          model: context.CategoriesModel,
-          attributes: ["id", "name", "description"],
-        },
-        {
-          model: context.PublishersModel,
-          attributes: ["id", "name", "country", "phone"],
-        },
-      ],
-    });
+    const bookResult = await BooksModel.findOne({
+      _id: id,
+      userId: req.user.id,
+    })
+      .populate('authorId', 'name email')
+      .populate('categoryId', 'name description')
+      .populate('publisherId', 'name country phone')
+      .lean();
 
     if (!bookResult) {
       return res.status(404).render("404", {
@@ -337,30 +304,22 @@ export async function GetDetails(req, res, next) {
       });
     }
 
-    const categoriesResult = await context.CategoriesModel.findAll({
-      where: { userId: req.user.id },
-      attributes: ["id", "name"],
-    });
-    const authorsResult = await context.AuthorsModel.findAll({
-      where: { userId: req.user.id },
-      attributes: ["id", "name"],
-    });
-    const publishersResult = await context.PublishersModel.findAll({
-      where: { userId: req.user.id },
-      attributes: ["id", "name", "country", "phone"],
-    });
-
-    const book = bookResult.dataValues;
-    const categories = categoriesResult.map((c) => c.dataValues);
-    const authors = authorsResult.map((a) => a.dataValues);
-    const publishers = publishersResult.map((p) => p.dataValues);
+    const categoriesResult = await CategoriesModel.find({
+      userId: req.user.id,
+    }).select('name').lean();
+    const authorsResult = await AuthorsModel.find({
+      userId: req.user.id,
+    }).select('name').lean();
+    const publishersResult = await PublishersModel.find({
+      userId: req.user.id,
+    }).select('name country phone').lean();
 
     res.render("books/details", {
-      book: book,
-      categoriesList: categories,
-      authorsList: authors,
-      publishersList: publishers,
-      "page-title": `Detalles: ${book.title}`,
+      book: bookResult,
+      categoriesList: categoriesResult,
+      authorsList: authorsResult,
+      publishersList: publishersResult,
+      "page-title": `Detalles: ${bookResult.title}`,
     });
   } catch (error) {
     console.error("Error fetching book details:", error);

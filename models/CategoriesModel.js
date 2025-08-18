@@ -1,34 +1,25 @@
-import connection from "../utils/DbConnection.js";
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 
-const Categories = connection.define(
-  "Categories",
+const categoriesSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
     name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     description: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
+      default: "",
     },
     userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Users",
-        key: "id",
-      },
+      type: mongoose.Schema.Types.ObjectId, //haciendo referencia al objecto mediante su campo objectId unico de mongo
+      ref: "Users", //referenciando el modelo con el que se relaciona
+      required: true,
     },
   },
-  {
-    tableName: "Categories",
-  }
-);
+  { timestamps: true, collection: "Categories" }
+); //esquema creado especificando los campos created y updated at y diciendo en que coleccion colocar los documentos
+
+const Categories = mongoose.model("Categories", categoriesSchema); //creando el modelo segun el esquema
 
 export default Categories;

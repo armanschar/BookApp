@@ -14,7 +14,7 @@
         
         <form enctype="multipart/form-data" method="POST" action="{{#if editMode}}/books/edit{{else}}/books/create{{/if}}">
             {{#if editMode}}
-            <input type="hidden" name="BookId" value="{{book.id}}">
+            <input type="hidden" name="BookId" value="{{book._id}}">
             {{/if}}
             
             <div class="mb-3">
@@ -55,11 +55,11 @@
                 <select class="form-select" id="CategoryId" name="CategoryId" required="required">
                     <option value="">Seleccione una Categoría</option>
                     {{#each categoriesList}}
-                    <option value="{{this.id}}" 
+                    <option value="{{this._id}}" 
                             {{#if ../editMode}}
-                                {{#if (eq this.id ../book.categoryId)}}selected{{/if}}
+                                {{#if (eq this._id ../book.categoryId._id)}}selected{{/if}}
                             {{else}}
-                                {{#if (eq this.id ../formData.CategoryId)}}selected{{/if}}
+                                {{#if (eq this._id ../formData.CategoryId)}}selected{{/if}}
                             {{/if}}>
                         {{this.name}}
                     </option>
@@ -79,11 +79,11 @@
                 <select class="form-select" id="AuthorId" name="AuthorId" required="required">
                     <option value="">Seleccione un Autor</option>
                     {{#each authorsList}}
-                    <option value="{{this.id}}" 
+                    <option value="{{this._id}}" 
                             {{#if ../editMode}}
-                                {{#if (eq this.id ../book.authorId)}}selected{{/if}}
+                                {{#if (eq this._id ../book.authorId._id)}}selected{{/if}}
                             {{else}}
-                                {{#if (eq this.id ../formData.AuthorId)}}selected{{/if}}
+                                {{#if (eq this._id ../formData.AuthorId)}}selected{{/if}}
                             {{/if}}>
                         {{this.name}}
                     </option>
@@ -103,11 +103,11 @@
                 <select class="form-select" id="PublisherId" name="PublisherId" required="required">
                     <option value="">Seleccione una Editorial</option>
                     {{#each publishersList}}
-                    <option value="{{this.id}}" 
+                    <option value="{{this._id}}" 
                             {{#if ../editMode}}
-                                {{#if (eq this.id ../book.publisherId)}}selected{{/if}}
+                                {{#if (eq this._id ../book.publisherId._id)}}selected{{/if}}
                             {{else}}
-                                {{#if (eq this.id ../formData.PublisherId)}}selected{{/if}}
+                                {{#if (eq this._id ../formData.PublisherId)}}selected{{/if}}
                             {{/if}}>
                         {{this.name}}
                     </option>

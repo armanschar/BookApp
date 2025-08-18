@@ -1,8 +1,9 @@
-import context from "../context/AppContext.js";
+import UserModel from "../models/UserModel.js";
+
 import bcrypt from "bcrypt";
 import { promisify } from "util";
 import { randomBytes } from "crypto";
-import { Op } from "sequelize";
+
 import { sendEmail } from "../services/EmailServices.js";
 import { isAbsolute } from "path";
 
@@ -13,7 +14,7 @@ export function GetLogin(req, res, next) {
 export async function PostLogin(req, res, next) {
   const { Email, Password } = req.body;
   try {
-    const user = await context.UserModel.findOne({ where: { email: Email } });
+    const user = await UserModel.findOne({ email: Email });
     if (!user) {
       req.flash("errors", "El correo electrónico no está registrado.");
       return res.redirect("/");
@@ -33,7 +34,7 @@ export async function PostLogin(req, res, next) {
     }
     req.session.isAuthenticated = true;
     req.session.user = {
-      id: user.id,
+      id: user._id,
       name: user.name,
       email: user.email,
     };
@@ -78,7 +79,7 @@ export async function PostRegister(req, res, next) {
       return res.redirect("/register");
     }
 
-    const user = await context.UserModel.findOne({ where: { email: Email } });
+    const user = await UserModel.findOne({ email: Email });
     if (user) {
       req.flash("errors", "El correo electrónico ya está registrado.");
       return res.redirect("/register");
@@ -89,7 +90,7 @@ export async function PostRegister(req, res, next) {
     const token = buffer.toString("hex");
 
     const hashedPassword = await bcrypt.hash(Password, 10);
-    await context.UserModel.create({
+    await UserModel.create({
       name: Name,
       email: Email,
       password: hashedPassword,
@@ -131,7 +132,7 @@ export async function PostForgot(req, res, next) {
     const randomBytesAsync = promisify(randomBytes);
     const buffer = await randomBytesAsync(32);
     const token = buffer.toString("hex");
-    const user = await context.UserModel.findOne({ where: { email: Email } });
+    const user = await UserModel.findOne({ email: Email });
     if (!user) {
       req.flash(
         "errors",
@@ -185,13 +186,11 @@ export async function GetReset(req, res, next) {
     return res.redirect("/forgot");
   }
   try {
-    const user = await context.UserModel.findOne({
-      where: {
+    const user = await UserModel.findOne({
         resetToken: token,
         resetTokenExpiration: {
-          [Op.gte]: Date.now(),
+          $gte: Date.now(),
         },
-      },
     });
 
     if (!user) {
@@ -202,7 +201,7 @@ export async function GetReset(req, res, next) {
     res.render("auth/reset", {
       "page-title": "Reset Password",
       layout: "login",
-      userId: user.id,
+      userId: user._id,
       token: token,
     });
   } catch (error) {
@@ -223,13 +222,11 @@ export async function PostReset(req, res, next) {
       req.flash("errors", "Las contraseñas no coinciden.");
       return res.redirect(`/reset/${token}`);
     }
-    const user = await context.UserModel.findOne({
-      where: {
-        id: userId,
-        resetToken: token,
-        resetTokenExpiration: {
-          [Op.gte]: Date.now(),
-        },
+    const user = await UserModel.findOne({
+      _id: userId,
+      resetToken: token,
+      resetTokenExpiration: {
+        $gte: Date.now(),
       },
     });
 
@@ -261,8 +258,8 @@ export async function GetActivate(req, res, next) {
   }
 
   try {
-    const user = await context.UserModel.findOne({
-      where: { activateToken: token },
+    const user = await UserModel.findOne({
+      activateToken: token,
     });
     if (!user) {
       req.flash("errors", "Token de activación no válido o expirado.");

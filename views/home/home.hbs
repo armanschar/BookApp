@@ -21,11 +21,11 @@
                         {{#each categoriesList}}
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" 
-                                   name="category" value="{{this.id}}" id="category{{this.id}}"
+                                   name="category" value="{{this._id}}" id="category{{this._id}}"
                                    {{#each ../selectedCategories}}
-                                       {{#if (eq this ../this.id)}}checked{{/if}}
+                                       {{#if (eq this ../this._id)}}checked{{/if}}
                                    {{/each}}>
-                            <label class="form-check-label" for="category{{this.id}}">
+                            <label class="form-check-label" for="category{{this._id}}">
                                 {{this.name}}
                             </label>
                         </div>
@@ -53,7 +53,7 @@
     {{#each booksList}}
     <div class="col-md-4 mb-4">
         <div class="card h-100 book-card" style="cursor: pointer;" 
-             onclick="location.href='/books/details/{{this.id}}';">
+             onclick="location.href='/books/details/{{this._id}}';">
             <img src="{{this.coverImage}}" class="card-img-top" 
                  alt="{{this.title}}" style="height: 200px; object-fit: contain;">
             <div class="card-body d-flex flex-column">
@@ -94,7 +94,7 @@
     <strong>Categorías filtradas:</strong>
     {{#each selectedCategories}}
         {{#each ../categoriesList}}
-            {{#if (eq ../this this.id)}}
+            {{#if (eq ../this this._id)}}
                 <span class="badge bg-primary me-1">{{this.name}}</span>
             {{/if}}
         {{/each}}

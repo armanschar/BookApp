@@ -1,21 +1,24 @@
-import { where } from "sequelize";
-import context from "../context/AppContext.js";
+import AuthorsModel from "../models/AuthorsModel.js";
+import BooksModel from "../models/BooksModel.js";
 
 export async function GetIndex(req, res) {
   try {
-    const authorsResult = await context.AuthorsModel.findAll({
-      where: { userId: req.user.id }, // Assuming you want to filter by the logged-in user
-      order: [["name", "ASC"]],
-    });
+    const result = await AuthorsModel.find({
+      userId: req.user.id, // Ensure the authors belong to the logged-in user
+    })
+      .sort({ createdAt: -1 })
+      .lean();
 
     const authors = await Promise.all(
-      authorsResult.map(async (author) => {
-        const bookCount = await context.BooksModel.count({
-          where: { authorId: author.id, userId: req.user.id }, // Filter by userId to ensure only books of the logged-in user are counted
+      result.map(async (author) => {
+        const bookCount = await BooksModel.countDocuments({
+          authorId: author._id,
+          userId: req.user.id, // Filter by userId to ensure only books of the logged-in user are counted
         });
 
         return {
-          ...author.dataValues,
+          ...author,
+          authorId: author._id,
           bookCount: bookCount,
         };
       })
@@ -45,11 +48,10 @@ export function GetCreate(req, res) {
 }
 
 export async function PostCreate(req, res) {
-  const name = req.body.Name;
-  const email = req.body.Email;
+  const {name, email} = req.body;
 
   try {
-    await context.AuthorsModel.create({
+    await AuthorsModel.create({
       name: name,
       email: email,
       userId: req.user.id, // Assuming you want to associate the author with the logged-in user
@@ -72,17 +74,18 @@ export async function GetEdit(req, res, next) {
   const id = req.params.authorId;
 
   try {
-    const result = await context.AuthorsModel.findOne({
-      where: { id: id, userId: req.user.id }, // Ensure the author belongs to the logged-in user,
-    });
+    const result = await AuthorsModel.findOne({
+      _id: id,
+      userId: req.user.id,
+    }).lean();
     if (!result) {
       return res.redirect("/authors");
     }
-    const author = result.dataValues;
+
     res.render("authors/save", {
       editMode: true,
-      author: author,
-      "page-title": `Editar Autor: ${author.name}`,
+      author: result,
+      "page-title": `Editar Autor: ${result.name}`,
     });
   } catch (error) {
     console.error("Error fetching authors for edit:", error);
@@ -91,20 +94,19 @@ export async function GetEdit(req, res, next) {
 }
 
 export async function PostEdit(req, res, next) {
-  const name = req.body.Name;
-  const email = req.body.Email;
-  const id = req.body.authorId;
+  const { name, email, authorId } = req.body;
 
   try {
-    const result = await context.AuthorsModel.findOne({
-      where: { id: id, userId: req.user.id }, // Ensure the author belongs to the logged-in user,
+    const result = await AuthorsModel.findOne({
+      _id: authorId,
+      userId: req.user.id,
     });
     if (!result) {
       return res.redirect("/authors");
     }
-    await context.AuthorsModel.update(
-      { name: name, email: email, userId: req.user.id },
-      { where: { id: id } }
+    await AuthorsModel.findByIdAndUpdate(
+      authorId,
+      { name: name, email: email }
     );
     req.flash("success", "Autor actualizado exitosamente.");
     res.redirect("/authors");
@@ -118,22 +120,23 @@ export async function GetDelete(req, res, next) {
   const id = req.params.authorId;
 
   try {
-    const result = await context.AuthorsModel.findOne({
-      where: { id: id, userId: req.user.id },
-    }); // Ensure the author belongs to the logged-in user
+    const result = await AuthorsModel.findOne({
+      _id: id,
+      userId: req.user.id,
+    }).lean(); // Ensure the author belongs to the logged-in user
     if (!result) {
       return res.redirect("/authors");
     }
 
-    const bookCount = await context.BooksModel.count({
-      where: { authorId: id, userId: req.user.id }, // Filter by userId to ensure only books of the logged-in user are counted
+    const bookCount = await BooksModel.countDocuments({
+      authorId: id,
+      userId: req.user.id,
     });
 
-    const author = result.dataValues;
     res.render("authors/delete", {
-      author: author,
+      author: result,
       bookCount: bookCount,
-      "page-title": `Eliminar Autor: ${author.name}`,
+      "page-title": `Eliminar Autor: ${result.name}`,
     });
   } catch (error) {
     console.error("Error fetching author for delete:", error);
@@ -145,28 +148,29 @@ export async function PostDelete(req, res, next) {
   const id = req.body.authorId;
 
   try {
-    const bookCount = await context.BooksModel.count({
-      where: { authorId: id, userId: req.user.id }, // Filter by userId to ensure only books of the logged-in user are counted
+    const bookCount = await BooksModel.countDocuments({
+      authorId: id,
+      userId: req.user.id,
     });
 
     if (bookCount > 0) {
-      const result = await context.AuthorsModel.findOne({
-        where: { id: id, userId: req.user.id },
+      const result = await AuthorsModel.findOne({
+        _id: id,
+        userId: req.user.id,
       }); // Ensure the author belongs to the logged-in user
-      const author = result.dataValues;
 
       return res.render("authors/delete", {
-        author: author,
+        author: result,
         bookCount: bookCount,
         error: `No se puede eliminar este autor porque tiene ${bookCount} libro(s) asociado(s).`,
-        "page-title": `Eliminar Autor: ${author.name}`,
+        "page-title": `Eliminar Autor: ${result.name}`,
       });
     }
 
-    await context.AuthorsModel.destroy({
-      where: { id: id, userId: req.user.id },
+    await AuthorsModel.deleteOne({
+      _id: id,
+      userId: req.user.id,
     });
-    req.flash("success", "Autor eliminado exitosamente.");
     return res.redirect("/authors");
   } catch (error) {
     console.error("Error deleting author:", error);

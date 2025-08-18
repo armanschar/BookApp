@@ -1,66 +1,45 @@
-import connection from "../utils/DbConnection.js";
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 
-const Books = connection.define(
-  "Books",
+const booksSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
     title: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     publicationYear: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        min: 1450,
-        max: new Date().getFullYear() + 10,
-      },
+      type: Number,
+      required: true,
+      min: 1450,
+      max: new Date().getFullYear() + 10,
     },
     coverImage: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     categoryId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Categories",
-        key: "id",
-      },
+      type: mongoose.Schema.Types.ObjectId, //haciendo referencia al objecto mediante su campo objectId unico de mongo
+      ref: "Categories", //referenciando el modelo con el que se relaciona
+      required: true,
     },
     authorId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Authors",
-        key: "id",
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Authors",
+      required: true,
     },
     publisherId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Publishers",
-        key: "id",
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Publishers",
+      required: true,
     },
     userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Users",
-        key: "id",
-      },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
+      required: true,
     },
   },
-  {
-    tableName: "Books",
-  }
+  { timestamps: true, collection: "Books" }
 );
+
+const Books = mongoose.model("Books", booksSchema); //creando el modelo segun el esquema
 
 export default Books;

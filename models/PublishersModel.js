@@ -1,38 +1,28 @@
-import connection from "../utils/DbConnection.js";
-import { DataTypes } from "sequelize";
+import mongoose from "mongoose";
 
-const Publishers = connection.define(
-  "Publishers",
+const publishersSchema = new mongoose.Schema(
   {
-    id: {
-      type: DataTypes.INTEGER,
-      primaryKey: true,
-      autoIncrement: true,
-    },
     name: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     phone: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     country: {
-      type: DataTypes.STRING,
-      allowNull: false,
+      type: String,
+      required: true,
     },
     userId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Users",
-        key: "id",
-      },
+      type: mongoose.Schema.Types.ObjectId, //haciendo referencia al objecto mediante su campo objectId unico de mongo
+      ref: "Users", //referenciando el modelo con el que se relaciona
+      required: true,
     },
   },
-  {
-    tableName: "Publishers",
-  }
+  { timestamps: true, collection: "Publishers" } //esquema creado especificando los campos created y updated at y diciendo en que coleccion colocar los documentos
 );
+
+const Publishers = mongoose.model("Publishers", publishersSchema); //creando el modelo segun el esquema
 
 export default Publishers;
