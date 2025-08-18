@@ -21,7 +21,7 @@ import { GetSection } from "./utils/helpers/hbs/Section.js";
 import { GetPhone } from "./utils/helpers/hbs/GetPhone.js";
 import { GetCountry } from "./utils/helpers/hbs/GetCountry.js";
 import session from "express-session";
-
+import MongoStore from "connect-mongo";
 
 const app = express();
 
@@ -62,6 +62,11 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+      collectionName: "sessions",
+      ttl: 14 * 24 * 60 * 60, // 14 days
+    }),
   })
 );
 
