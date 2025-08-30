@@ -1,1 +1,1 @@
-Aplicacion de Node/Express con Handlebars para manejo de libros. Posee envío de correos con Nodemailer, autenticación mediante registro, login y restauración de cuenta mediante correo. Base de datos en SQLite para DEV y MariaDB para QA. uso de métodos asíncronos y encriptación de contraseñas
+Aplicacion de Node/Express con Handlebars para manejo de libros. Posee envío de correos con Nodemailer, autenticación mediante registro, login y restauración de cuenta mediante correo. Base de datos en MongoDB. uso de métodos asíncronos y encriptación de contraseñas
